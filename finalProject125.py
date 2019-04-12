@@ -1,6 +1,5 @@
 # Import Dependencies
 import hashlib
-
 import time
 
 
@@ -25,45 +24,46 @@ def recursiveSolve(charList, tempTry, hashedString, fuse):
         return None
     #if the fuse is the right length, we have to compute the hash and see if we have a match
     elif fuse == len(tempTry):
-        #iterate over
-        for x in charList:
-            #check if the hashes match, if so return
-            if hashlib.md5((tempTry).encode('utf-8')).hexdigest() == hashedString :
-                return tempTry
-
-
-        #print "no answer"
+        #check if the hashes match, if so return the password
+        if hashlib.md5((tempTry).encode('utf-8')).hexdigest() == hashedString :
+            return tempTry
+        #if not, don't return anything
         return None
 
 def main():
-
-    hashFile = open("hashes.txt","r")
-    hashList = hashFile.readlines()
-    #complete list of possible characters
-    #alphanumericList = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', ']', '^', '_', '`', '{', '|', '}', '~']
-    #only the special characters used in the test password
-    alphanumericList = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '@']
-    #only lowercase characters
-    #alphanumericList = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm']
-    solved = False;
-    for hashedLine in hashList:
-        startTime = time.time()
-
+    try:
+        hashFile = open("hashes.txt","r")
+        hashList = hashFile.readlines()
+        #complete list of possible characters
+        #alphanumericList = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', ']', '^', '_', '`', '{', '|', '}', '~']
+        #only the special characters used in the test password
+        alphanumericList = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '@']
+        #only lowercase characters
+        #alphanumericList = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm']
         solved = False;
-        for i in range(0, 6):
-            if not solved:
-                tempcompare = ""
-                result = recursiveSolve(alphanumericList, tempcompare, hashedLine, i)
-                if result != "NULL" and result != None:
-                    solved = True;
 
-                    print "For the hashed password " + hashedLine.rstrip()
-                    print "The cracked password is " + result
-                    print "And the time to solve it was "
-                    print time.time()-startTime
-                    print "\n"
+        #this iterates through all hashes in the input list
+        for hashedLine in hashList:
+            startTime = time.time()
+            solved = False;
 
-    #print(recursiveSolve(alphanumericList, "", hashedLine, 10))
+            #I make the algorithm stop trying after 10 characters because anything
+            #longer would never finish. This is pretty arbitrary though and it just
+            #needs to be long enough
+            for i in range(1, 10):
+                if not solved:
+                    tempcompare = ""
+                    result = recursiveSolve(alphanumericList, tempcompare, hashedLine, i)
+                    if result != "NULL" and result != None:
+                        solved = True;
+
+                        print "For the hashed password " + hashedLine.rstrip()
+                        print "The cracked password is " + result
+                        print "And the time to solve it was (in seconds)"
+                        print time.time()-startTime
+                        print "\n"
+    except ValueError:
+        print "Done!"
 
 if __name__ == "__main__":
     main()
