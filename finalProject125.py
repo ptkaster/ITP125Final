@@ -1,34 +1,35 @@
 # Import Dependencies
 import hashlib
-from multiprocessing import Process
+
 import time
 
 
+#recursiveSolve is the function to recursively solve algorithms
+#charList contains the character universe from which enumerations and hashes are computed
+#tempTry has the string constructed so far
+#hashedString is the hash we are trying to match
+#fuse is the length of password we are looking to match. We must use a fuse because
+#otherwise the recursive tree will call indefinitely and there would be no base case
 def recursiveSolve(charList, tempTry, hashedString, fuse):
-    #print tempTry
-    #print fuse
-    #print "\n"
+    #we must remove the endline and spaces in order to get a matched hash
     hashedString = hashedString.rstrip()
-
+    #if we aren't to the correct length, call all possible next character strings
+    #from our base tempTry
     if len(tempTry) < fuse:
         tempResult = ""
         for x in charList:
-            #print x
             tempResult = recursiveSolve(charList, (tempTry + x), hashedString, fuse)
-            #print tempResult
+            #if we get a match, return the match immediately
             if tempResult != None:
                 return tempResult
-        #print "NONE"
         return None
-
+    #if the fuse is the right length, we have to compute the hash and see if we have a match
     elif fuse == len(tempTry):
+        #iterate over
         for x in charList:
-            #print "correct length match"
-            #print hashlib.md5((tempTry + x).encode('utf-8')).hexdigest() + " vs " + hashedString
-
-            if hashlib.md5((tempTry + x).encode('utf-8')).hexdigest() == hashedString :
-                print tempTry + x + " answer"
-                return (tempTry+x)
+            #check if the hashes match, if so return
+            if hashlib.md5((tempTry).encode('utf-8')).hexdigest() == hashedString :
+                return tempTry
 
 
         #print "no answer"
@@ -55,10 +56,12 @@ def main():
                 result = recursiveSolve(alphanumericList, tempcompare, hashedLine, i)
                 if result != "NULL" and result != None:
                     solved = True;
-                    print hashedLine
-                    print result
-                    print "time to solve was "
+
+                    print "For the hashed password " + hashedLine.rstrip()
+                    print "The cracked password is " + result
+                    print "And the time to solve it was "
                     print time.time()-startTime
+                    print "\n"
 
     #print(recursiveSolve(alphanumericList, "", hashedLine, 10))
 
